@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Salty OS</title>
+        <link rel="preload" href="font/Rubik.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="icon" type="image/x-icon" href="assets/logo.png" />
+    </head>
+
+    <body>
+        <template id="theme-card-template">
+            <div class="card-theme">
+                <iframe id="simulator" data-src="api/get-simulator?embed" title="SaltyOS simulator" loading="lazy" scrolling="no"></iframe>
+                <div class="card-footer">
+                    <div id="title" class="card-title"></div>
+                    <button id="button">Add to pack</button>
+                </div>
+            </div>
+        </template>
+
+        <script src="/components/x-header.js"></script>
+        <x-header></x-header>
+
+        <section class="banner-section">
+            <div class="banner-content">
+                <h1 class="big-text-logo">SaltyOS</h1>
+                <p class="banner-subtitle">An upgraded OS for your calculator</p>
+            </div>
+        </section>
+
+        <hr />
+
+        <section class="features-section" id="features">
+            <h2>Features</h2>
+
+            <div class="features-grid">
+                <div class="card-feature">
+                    <div class="card-title">Themes</div>
+                    <div class="card-text">Multiple themes simultaneously with wallpapers, custom icons and color palette</div>
+                </div>
+                <div class="card-feature">
+                    <div class="card-title">Hide external apps</div>
+                    <div class="card-text">Toggle the visibility of external apps</div>
+                </div>
+                <div class="card-feature">
+                    <div class="card-title">Symbolic calculation</div>
+                    <div class="card-text">Symbolic calculation even in exam mode</div>
+                </div>
+                <div class="card-feature">
+                    <div class="card-title">Based on Epsilon 26.1.0</div>
+                    <div class="card-text">All features from the latest version of Epsilon</div>
+                </div>
+                <div class="card-feature">
+                    <div class="card-title">Support almost all numworks calculator</div>
+                    <div class="card-text">N0110, N0115 and N0120 are supported even with locked bootloader</div>
+                </div>
+                <div class="card-feature">
+                    <div class="card-title">Externe apps support</div>
+                    <div class="card-text">All NWA apps are supported</div>
+                </div>
+            </div>
+        </section>
+
+        <hr />
+
+        <section class="latest-themes-section">
+            <div class="separated-div">
+                <h2>Latest Themes</h2>
+                <a class="button" href="/browse">Browse All</a>
+            </div>
+            <div class="latest-themes-grid" id="latest-themes-grid"></div>
+        </section>
+
+        <hr />
+
+        <script src="/components/x-footer.js"></script>
+        <x-footer></x-footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.13.0/build/player/lottie_light.min.js"></script>
+        <script type="module" src="/dist/script.js"></script>
+    </body>
+</html>
