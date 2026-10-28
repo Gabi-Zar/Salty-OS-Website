@@ -7,6 +7,7 @@ import { writeFile } from "fs/promises";
 
 const app = express();
 const PORT = Number(process.env.PORT);
+const TRUST_PROXY = process.env.TRUST_PROXY === "true";
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -47,6 +48,10 @@ try {
     await verifySimulatorUpdate();
 } catch (err) {
     console.error(err);
+}
+
+if (TRUST_PROXY) {
+    app.set("trust proxy", 1);
 }
 
 app.use(express.json());
