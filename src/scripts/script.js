@@ -63,12 +63,16 @@ for (const option of options) {
         const text = option.querySelector("span").textContent;
 
         for (const option of options) {
-            option.classList.remove("selected");
+            if (option.classList.contains("selected")) {
+                if (text === document.getElementById("selected-lang").textContent) {
+                    toggleDropdown();
+                    return;
+                }
+                option.classList.remove("selected");
+            }
         }
         option.classList.add("selected");
         document.getElementById("selected-lang").textContent = text;
-
-        console.log(text);
 
         switch (text) {
             case "English":
