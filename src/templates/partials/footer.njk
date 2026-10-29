@@ -1,0 +1,35 @@
+<footer class="footer">
+    <div class="footer-grid">
+        <h1 class="text-logo">SaltyOS</h1>
+        <div class="vertical-div">
+            <a href="https://github.com/SaltyMold/Salty-OS" target="_blank" rel="noreferrer"><div id="github-icon-1" class="logo inverse-color"></div></a>
+            <p class="small-text">Salty OS</p>
+        </div>
+        <div class="vertical-div">
+            <a href="https://github.com/Gabi-Zar/Salty-OS-Website" target="_blank" rel="noreferrer"><div id="github-icon-2" class="logo inverse-color"></div></a>
+            <p class="small-text">{{ t("footer.website") }}</p>
+        </div>
+        <div class="lang-switcher">
+            <div class="lang-trigger" type="button" aria-expanded="false" aria-haspopup="listbox">
+                <span class="lang-label">
+                    <span id="selected-lang">{{ t("footer.lang") }}</span>
+                    <span class="lang-sizer" aria-hidden="true">Français</span>
+                    <span class="lang-sizer" aria-hidden="true">English</span>
+                </span>
+            </div>
+
+            <ul class="lang-dropdown" role="listbox">
+                <li class="lang-option {% if lang == 'fr' %}selected{% endif %}" role="option" tabindex="-1" data-value="fr">
+                    <span>Français</span>
+                </li>
+                <li class="lang-option {% if lang == 'en' %}selected{% endif %}" role="option" tabindex="-1" data-value="en">
+                    <span>English</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="vertical-div">
+        <p class="centered-text small-text">{{ t("footer.numworks") }}</p>
+        <p class="small-text">{{ t("footer.useanimations") }}<a class="small-text" href="https://useanimations.com" target="_blank" rel="noreferrer">useAnimations</a></p>
+    </div>
+</footer>

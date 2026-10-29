@@ -1,9 +1,12 @@
 import "dotenv/config";
 import express from "express";
-import apiRoutes from "./routes/api.js";
+import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import { refreshCache } from "./themes-storage.js";
 import { writeFile } from "fs/promises";
+
+import apiRoutes from "./routes/api.js";
+import { LANGS, DEFAULT_LANG } from "./i18n-build.js";
 
 const app = express();
 const PORT = Number(process.env.PORT);
@@ -35,7 +38,7 @@ async function verifySimulatorUpdate() {
         }
 
         let text = await simulatorRes.text();
-        text = text.replace("var SALTY_ALLOWED_ORIGINS = [];", `var SALTY_ALLOWED_ORIGINS = ["${process.env.SALTY_ALLOWED_ORIGIN}"];`);
+        text = text.replace("var SALTY_ALLOWED_ORIGINS = [];", `var SALTY_ALLOWED_ORIGINS = ["${process.env.SITE_URL}"];`);
 
         await writeFile("./epsilon.html", text, "utf-8");
 
@@ -53,6 +56,17 @@ try {
 if (TRUST_PROXY) {
     app.set("trust proxy", 1);
 }
+
+app.use(cookieParser());
+
+app.get("/", (req, res, next) => {
+    res.vary("Accept-Language");
+    res.vary("Cookie");
+
+    const lang = LANGS.includes(req.cookies.lang) ? req.cookies.lang : req.acceptsLanguages(LANGS) || DEFAULT_LANG;
+    if (lang !== DEFAULT_LANG) return res.redirect(302, `/${lang}/`);
+    next();
+});
 
 app.use(express.json());
 

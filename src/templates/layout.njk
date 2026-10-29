@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="{{ lang }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ title }}</title>
+        <link rel="preload" href="/font/Rubik.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="icon" type="image/x-icon" href="/assets/logo.png" />
+
+        <link rel="canonical" href="{{ siteUrl }}{{ "" if lang == defaultLang else "/" ~ lang }}{{ pagePath }}" />
+        {% for lang in langs %}
+            <link rel="alternate" hreflang="{{ lang }}" href="{{ siteUrl }}{{ "" if lang == defaultLang else "/" ~ lang }}{{ pagePath }}" />
+        {% endfor %}
+        <link rel="alternate" hreflang="x-default" href="{{ siteUrl }}{{ pagePath }}" />
+    </head>
+
+    <body>
+        {% include "partials/header.njk" %}
+        {% block content %}
+        {% endblock %}
+        {% include "partials/footer.njk" %}
+
+        <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.13.0/build/player/lottie_light.min.js"></script>
+        <script type="module" src="/dist/script.js"></script>
+    </body>
+</html>

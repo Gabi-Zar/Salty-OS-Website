@@ -1,0 +1,35 @@
+<header class="header separated-div">
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden />
+
+    <div class="horizontal-div nav-group">
+        <a href="{{ prefix }}/#">
+            <img class="logo" src="/assets/logo.png" />
+        </a>
+
+        <label for="nav-toggle" class="burger"> <span></span><span></span><span></span> </label>
+
+        <nav class="nav-links">
+            <a href="{{ prefix }}/#features">{{ t("header.features") }}</a>
+            <a href="{{ prefix }}/install">{{ t("header.install") }}</a>
+            <a href="{{ prefix }}/browse">{{ t("header.browse") }}</a>
+            <a href="{{ prefix }}/new">{{ t("header.new") }}</a>
+        </nav>
+    </div>
+    <div class="horizontal-div small-gap">
+        <div class="vertical-div">
+            <div class="separated-div">
+                <p class="small-text">{{ t("header.space") }}</p>
+                <p id="themes-size-text" class="themes-size-text"></p>
+            </div>
+            <div id="themes-size-bar-container" class="themes-size-bar-container">
+                <div id="themes-size-bar" class="themes-size-bar"></div>
+            </div>
+        </div>
+        <a href="{{ prefix }}/package" class="archive">
+            <div id="archive-icon" class="inverse-color logo">
+                <span class="tooltiptext inverse-color">{{ t("header.pack") }}</span>
+            </div>
+            <span id="archive-counter" class="badge hidden">0</span>
+        </a>
+    </div>
+</header>

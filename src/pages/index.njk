@@ -1,0 +1,65 @@
+{% extends "layout.njk" %}
+{% set title = t("title.index") %}
+{% block content %}
+    <template id="theme-card-template">
+        <div class="card-theme">
+            <iframe id="simulator" data-src="/api/get-simulator?embed" title="SaltyOS simulator" loading="lazy" scrolling="no"></iframe>
+            <div class="card-footer">
+                <div id="title" class="card-title"></div>
+                <button id="button">{{ t("themes.add") }}</button>
+            </div>
+        </div>
+    </template>
+
+    <section class="banner-section">
+        <div class="banner-content">
+            <h1 class="big-text-logo">SaltyOS</h1>
+            <p class="banner-subtitle">{{ t("home.subtitle") }}</p>
+        </div>
+    </section>
+
+    <hr />
+
+    <section class="features-section" id="features">
+        <h2>{{ t("features.title") }}</h2>
+
+        <div class="features-grid">
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.themes.title") }}</div>
+                <div class="card-text">{{ t("features.themes.text") }}</div>
+            </div>
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.hide.title") }}</div>
+                <div class="card-text">{{ t("features.hide.text") }}</div>
+            </div>
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.symbolic.title") }}</div>
+                <div class="card-text">{{ t("features.symbolic.text") }}</div>
+            </div>
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.epsilon.title") }}</div>
+                <div class="card-text">{{ t("features.epsilon.text") }}</div>
+            </div>
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.devices.title") }}</div>
+                <div class="card-text">{{ t("features.devices.text") }}</div>
+            </div>
+            <div class="card-feature">
+                <div class="card-title">{{ t("features.apps.title") }}</div>
+                <div class="card-text">{{ t("features.apps.text") }}</div>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section class="latest-themes-section">
+        <div class="separated-div">
+            <h2>{{ t("themes.latest") }}</h2>
+            <a class="button" href="/browse">{{ t("themes.browseAll") }}</a>
+        </div>
+        <div class="latest-themes-grid" id="latest-themes-grid"></div>
+    </section>
+
+    <hr />
+{% endblock %}

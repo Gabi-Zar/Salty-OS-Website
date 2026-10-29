@@ -1,27 +1,37 @@
+import "dotenv/config";
 import * as esbuild from "esbuild";
 import { rm } from "fs/promises";
+import { watch } from "fs";
+import { buildPages } from "./i18n-build.js";
 
-try {
-    await rm("public/dist", { recursive: true });
-} catch {}
+await rm("public/dist", { recursive: true, force: true });
 
-const watch = process.argv.includes("--watch");
+const isWatching = process.argv.includes("--watch");
 
 const options = {
-    entryPoints: ["src/script.js"],
+    entryPoints: ["src/scripts/script.js"],
     outdir: "public/dist",
     bundle: true,
     format: "esm",
     target: "es2022",
-    sourcemap: watch,
-    minify: !watch,
+    sourcemap: isWatching,
+    minify: !isWatching,
     logLevel: "info",
 };
 
-if (watch) {
+await buildPages();
+
+if (isWatching) {
     const ctx = await esbuild.context(options);
     await ctx.watch();
-    console.log("esbuild: watching src/…");
+
+    for (const dir of ["src/pages", "src/templates", "locales"]) {
+        watch(dir, { recursive: true }, async () => {
+            try {
+                await buildPages();
+            } catch {}
+        });
+    }
 } else {
     await esbuild.build(options);
 }
