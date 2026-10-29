@@ -45,4 +45,4 @@ async function buildPages() {
     console.log("[i18n] Pages build finished");
 }
 
-export { buildPages, LANGS, DEFAULT_LANG };
+export { buildPages };

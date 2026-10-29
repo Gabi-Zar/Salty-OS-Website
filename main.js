@@ -6,11 +6,12 @@ import { refreshCache } from "./themes-storage.js";
 import { writeFile } from "fs/promises";
 
 import apiRoutes from "./routes/api.js";
-import { LANGS, DEFAULT_LANG } from "./i18n-build.js";
 
 const app = express();
 const PORT = Number(process.env.PORT);
 const TRUST_PROXY = process.env.TRUST_PROXY === "true";
+const LANGS = ["en", "fr"];
+const DEFAULT_LANG = "en";
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
