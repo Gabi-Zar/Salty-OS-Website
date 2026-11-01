@@ -7,7 +7,7 @@
     "start": "node main.js",
     "build": "node build.js",
     "dev:client": "node build.js --watch",
-    "dev:server": "node --watch main.js",
+    "dev:server": "node --watch main.js --dev",
     "dev": "pnpm run --parallel \"/^dev:/\""
   },
   "keywords": [],

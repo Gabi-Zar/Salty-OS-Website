@@ -48,10 +48,12 @@ async function verifySimulatorUpdate() {
     }
 }
 
-try {
-    await verifySimulatorUpdate();
-} catch (err) {
-    console.error(err);
+if (!process.argv.includes("--dev")) {
+    try {
+        await verifySimulatorUpdate();
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 if (TRUST_PROXY) {

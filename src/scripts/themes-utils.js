@@ -3,12 +3,16 @@ import { compressBound, compressBlock } from "lz4js";
 const PAGE = 0x1000;
 
 const MAGIC = 0x87654321;
-const VERSION = 4;
+const VERSION = 5;
 const HEADER_SIZE = 12;
 const ENTRY_SIZE = 136;
 const THEMES_MAX_SIZE = 0x180000; // 1572864
 
 const WALLPAPER_ROWS = 16;
+
+const PALETTE_MAGIC = 0x324c4150;
+const PALETTE_NAME_SIZE = 32;
+const PALETTE_RECORD_SIZE = PALETTE_NAME_SIZE + 4;
 
 const ICON_NAMES = ["calculation", "code", "distributions", "elements", "finance", "graph", "inference", "regression", "sequence", "settings", "solver", "stat"];
 
@@ -95,6 +99,44 @@ function packWallpaper(image) {
     return concat([u32(width, height, WALLPAPER_ROWS, chunkCount), u32(...offsets), u32(...chunks.map((c) => c.length)), ...chunks]);
 }
 
+function resolveColors(colors) {
+    const resolved = new Map();
+
+    function add(name, value) {
+        if (value.startsWith("@")) {
+            const color = resolved.get(value.slice(1));
+            if (color === undefined) throw new Error(`${name}: unknown color ${value}`);
+            resolved.set(name, color);
+        } else {
+            resolved.set(name, parseInt(value, 16));
+        }
+    }
+
+    for (const [key, value] of Object.entries(colors)) {
+        if (typeof value === "string") {
+            add(key, value);
+        } else {
+            for (const [subKey, subValue] of Object.entries(value)) add(key + subKey, subValue);
+        }
+    }
+    return resolved;
+}
+
+function encodePalette(colors) {
+    const blob = new Uint8Array(8 + colors.size * PALETTE_RECORD_SIZE);
+    const view = new DataView(blob.buffer);
+    view.setUint32(0, PALETTE_MAGIC, true);
+    view.setUint32(4, colors.size, true);
+
+    let offset = 8;
+    for (const [name, color] of colors) {
+        blob.set(new TextEncoder().encode(name), offset);
+        view.setUint32(offset + PALETTE_NAME_SIZE, color, true);
+        offset += PALETTE_RECORD_SIZE;
+    }
+    return blob;
+}
+
 function packThemes(themes) {
     let cursor = HEADER_SIZE + themes.length * ENTRY_SIZE;
     const entries = [];
@@ -115,7 +157,7 @@ function packThemes(themes) {
             cursor += wallSize;
         }
 
-        const palette = u32(...theme.palette);
+        const palette = theme.palette;
         const paletteOffset = cursor;
         blobs.push(palette);
         cursor += palette.length;
@@ -154,7 +196,7 @@ function packThemes(themes) {
 
 async function prepareTheme(theme) {
     const name = theme.name.trim();
-    const palette = Object.values(theme.palette);
+    const palette = encodePalette(resolveColors(theme.colors));
 
     const [wallpaper, ...icons] = await Promise.all([
         theme.wallpaper ? decodeImage(theme.wallpaper).then(packWallpaper) : null,
@@ -165,7 +207,7 @@ async function prepareTheme(theme) {
 }
 
 function themeSize(theme) {
-    return ENTRY_SIZE + 4 * theme.palette.length + (theme.wallpaper ? theme.wallpaper.length : 0) + theme.icons.reduce((sum, icon) => sum + (icon ? icon.length : 0), 0);
+    return ENTRY_SIZE + theme.palette.length + (theme.wallpaper ? theme.wallpaper.length : 0) + theme.icons.reduce((sum, icon) => sum + (icon ? icon.length : 0), 0);
 }
 
 async function buildThemesBinary(themes) {
