@@ -1,8 +1,7 @@
 node_modules
 .env
 themes.json
-epsilon.html
 *.ignore
-public/*.html
-public/fr
+public/**/*.html
 public/dist
+bin/*

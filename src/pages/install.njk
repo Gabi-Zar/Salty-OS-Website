@@ -1,4 +1,181 @@
 {% extends "layout.njk" %}
 {% set title = t("title.install") %}
+{% set description = t("description.install") %}
 {% block content %}
+    <section class="install" id="install" data-state="idle">
+        <div class="install-stage">
+            <aside class="calculator-sidebar">
+                <div class="calculator-wrapper">
+                    <div class="calculator-frame">
+                        <img class="calculator" src="/assets/calculator.webp" alt="" />
+                        <div class="scan-overlay" aria-hidden="true">
+                            <div class="scan-line"></div>
+                        </div>
+                    </div>
+                    <img class="cable" src="/assets/cable.svg" alt="" />
+                </div>
+
+                <div class="install-status" aria-live="polite">
+                    <p class="card-title" data-show="idle">{{ t("install.status.idle") }}</p>
+                    <p class="card-text install-hint" data-show="idle">{{ t("install.hint.idle") }}</p>
+
+                    <p class="card-title" data-show="connected">{{ t("install.status.connected") }}</p>
+                    <p class="card-title" data-show="scanning">{{ t("install.status.scanning") }}</p>
+                    <p class="card-text" data-show="done">{{ t("install.status.done") }}</p>
+
+                    <p class="card-title" data-show="connect-error">{{ t("install.status.connect.error") }}</p>
+                    <p class="card-text install-hint" data-show="connect-error">{{ t("install.hint.connect.error") }}</p>
+
+                    <p class="card-title" data-show="scan-error">{{ t("install.status.scan.error") }}</p>
+                    <p class="card-text install-hint" data-show="scan-error">{{ t("install.hint.scan.error") }}</p>
+
+                    <button type="button" id="install-connect" data-show="idle connect-error scan-error done">
+                        <span data-show="idle">{{ t("install.button.connect") }}</span>
+                        <span data-show="connect-error scan-error">{{ t("install.button.retry") }}</span>
+                        <span data-show="done">{{ t("install.button.reboot") }}</span>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="content-main" id="install-info">
+                <h2>{{ t("install.info.title") }}</h2>
+
+                <div class="features-grid">
+                    <article class="card-feature">
+                        <p class="small-text">{{ t("install.info.model") }}</p>
+                        <p class="card-title" data-info="model">—</p>
+                    </article>
+                    <article class="card-feature">
+                        <p class="small-text">{{ t("install.info.activeSlot") }}</p>
+                        <p class="card-title" data-info="activeSlot">—</p>
+                    </article>
+                </div>
+
+                {% set slotFields = ["valid", "os", "kernelVersion", "patch", "kernelAddress", "userlandVersion", "userlandAddress", "storageAddress", "storageSize", "range.extapps", "size.extapps", "range.ram", "size.ram", "range.username", "size.username", "range.themes", "size.themes"] %}
+                <div class="features-grid">
+                    {% for slot in ["A", "B"] %}
+                        <article class="card-feature install-slot" data-slot="{{ slot }}">
+                            <div class="separated-div">
+                                <p class="card-title">{{ t("install.slot." + (slot | lower)) }}</p>
+                                <span class="status-pill hidden" data-info="slot{{ slot }}.active">{{ t("install.slot.active") }}</span>
+                            </div>
+                            <dl class="info-list">
+                                {% for field in slotFields %}
+                                    <div class="separated-div">
+                                        <dt class="small-text">{{ t("install.slot." + field) }}</dt>
+                                        <dd data-info="slot{{ slot }}.{{ field }}">—</dd>
+                                    </div>
+                                {% endfor %}
+                            </dl>
+                            <div class="install-actions">
+                                <div class="horizontal-div install-actions-row">
+                                    <label class="small-text" for="install-username-{{ slot }}">{{ t("install.actions.username.label") }}</label>
+                                    <input
+                                        type="text"
+                                        id="install-username-{{ slot }}"
+                                        data-action="username-input"
+                                        maxlength="1024"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        placeholder="{{ t('install.actions.username.placeholder') }}"
+                                    />
+                                    <button type="button" id="install-username-button-{{ slot }}" data-action="username-save">{{ t("install.actions.username.save") }}</button>
+                                </div>
+                                <div class="horizontal-div install-actions-row">
+                                    <label class="small-text" for="install-select-{{ slot }}">{{ t("install.actions.software.label") }}</label>
+                                    <div class="install-select" id="install-select-{{ slot }}" data-action="install-select" data-value="salty">
+                                        <button type="button" class="install-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                            <span class="install-select-label">Salty OS</span>
+                                        </button>
+                                        <ul class="install-select-dropdown" role="listbox">
+                                            <li class="install-select-option selected" role="option" data-value="salty">SaltyOS</li>
+                                            <li class="install-select-option" role="option" data-value="ablauncher">ABLauncher</li>
+                                            <li class="install-select-option selected" role="option" data-value="saltyKernel">SaltyOS + SaltyKernel</li>
+                                            <li class="install-select-option selected" role="option" data-value="saltyBig">{{ t("install.actions.saltyBig") }}</li>
+                                            <li class="install-select-option selected" role="option" data-value="epsilon">Epsilon</li>
+                                            <li class="install-select-option" role="option" data-value="uninstall">{{ t("install.actions.uninstall") }}</li>
+                                            <li class="install-select-option" role="option" data-value="erase">{{ t("install.actions.erase") }}</li>
+                                        </ul>
+                                    </div>
+                                    <button type="button" id="install-button-{{ slot }}" data-action="install">{{ t("install.actions.install") }}</button>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <div class="flash-layout">
+                    <h2>{{ t("install.layout.title") }}</h2>
+
+                    <div class="flash-bar" id="flash-bar"></div>
+
+                    <ul class="flash-legend small-text">
+                        <li><span class="legend-swatch is-saltyos"></span>SaltyOS</li>
+                        <li><span class="legend-swatch is-epsilon"></span>Epsilon</li>
+                        <li><span class="legend-swatch is-omega"></span>Omega</li>
+                        <li><span class="legend-swatch is-upsilon"></span>Upsilon</li>
+                        <li><span class="legend-swatch is-extapps"></span>{{ t("install.layout.legend.extapps") }}</li>
+                        <li><span class="legend-swatch is-themes"></span>{{ t("install.layout.legend.themes") }}</li>
+                        <li><span class="legend-swatch is-free"></span>{{ t("install.layout.legend.free") }}</li>
+                    </ul>
+
+                    <template id="flash-seg-template">
+                        <div class="flash-seg">
+                            <div class="flash-seg-block"></div>
+                            <div class="flash-seg-bracket"></div>
+                            <p class="small-text flash-seg-size"></p>
+                            <p class="flash-seg-name"></p>
+                        </div>
+                    </template>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <div
+        id="install-i18n"
+        hidden
+        data-valid="{{ t('install.value.valid') }}"
+        data-invalid="{{ t('install.value.invalid') }}"
+        data-salty-locked="{{ t('install.value.salty.locked') }}"
+        data-salty-badslot="{{ t('install.value.salty.badslot') }}"
+        data-wrong-slot="{{ t('install.value.salty.wrongSlot') }}"
+        data-kernel-locked="{{ t('install.value.kernel.locked') }}"
+        data-no-omega-username="{{ t('install.value.noOmegaUsername') }}"
+        data-no-ext-apps="{{ t('install.value.noExtApps') }}"
+        data-no-username="{{ t('install.value.noUsername') }}"
+        data-seg-extapps="{{ t("install.layout.legend.extapps") }}"
+        data-seg-themes="{{ t("install.layout.legend.themes") }}"
+        data-seg-free="{{ t('install.layout.legend.free') }}"
+        data-locked="{{ t('install.value.locked') }}"
+        data-unlocked="{{ t('install.value.unlocked') }}"
+    ></div>
+
+    <div id="webusb-error-overlay" class="overlay hidden">
+        <div class="webusb-error">
+            <h3 class="error">{{ t("install.webusberror.title") }}</h3>
+            <p class="error">{{ t("install.webusberror.subtitle") }}</p>
+        </div>
+    </div>
+
+    <div id="flash-overlay" class="overlay flash-overlay hidden" role="alertdialog" aria-modal="true" aria-labelledby="flash-title" aria-live="polite">
+        <div class="flash-progress">
+            <h3 id="flash-title" data-when="running">{{ t("install.flash.title") }}</h3>
+            <h3 class="error" data-when="error">{{ t("install.flash.error.title") }}</h3>
+
+            <p class="card-text" data-when="running">{{ t("install.flash.warning") }}</p>
+            <p class="card-text" data-when="error">{{ t("install.flash.error.text") }}</p>
+
+            <div class="flash-progress-body" data-when="running">
+                <div class="themes-size-bar-container">
+                    <div class="themes-size-bar" id="flash-progress-fill"></div>
+                </div>
+                <div class="flash-progress-meta">
+                    <span class="themes-size-text" id="flash-progress-percent">0%</span>
+                </div>
+            </div>
+
+            <button type="button" id="flash-progress-close" data-when="error">{{ t("install.flash.close") }}</button>
+        </div>
+    </div>
 {% endblock %}

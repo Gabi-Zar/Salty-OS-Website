@@ -1,9 +1,10 @@
 {% extends "layout.njk" %}
 {% set title = t("title.index") %}
+{% set description = t("description.index") %}
 {% block content %}
     <template id="theme-card-template">
         <div class="card-theme">
-            <iframe id="simulator" data-src="/api/get-simulator?embed" title="SaltyOS simulator" loading="lazy" scrolling="no"></iframe>
+            <iframe id="simulator" data-src="/bin/SaltyOS.epsilon.html?embed" title="SaltyOS simulator" loading="lazy" scrolling="no"></iframe>
             <div class="card-footer">
                 <div id="title" class="card-title"></div>
                 <button id="button">{{ t("themes.add") }}</button>

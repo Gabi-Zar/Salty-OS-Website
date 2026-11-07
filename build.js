@@ -25,11 +25,13 @@ if (isWatching) {
     const ctx = await esbuild.context(options);
     await ctx.watch();
 
+    let timer;
     for (const dir of ["src/pages", "src/templates", "locales"]) {
-        watch(dir, { recursive: true }, async () => {
-            try {
-                await buildPages();
-            } catch {}
+        watch(dir, { recursive: true }, () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                buildPages().catch(console.error);
+            }, 100);
         });
     }
 } else {

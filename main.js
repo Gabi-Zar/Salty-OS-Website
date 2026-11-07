@@ -3,7 +3,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import { refreshCache } from "./themes-storage.js";
-import { writeFile } from "fs/promises";
+import { saltyOSDownload, epsilonDownload } from "./downloads-utils.js";
+import { mkdir, rm } from "fs/promises";
 
 import apiRoutes from "./routes/api.js";
 
@@ -20,37 +21,30 @@ const limiter = rateLimit({
     legacyHeaders: false,
 });
 
-let downloadedVersion = "";
+const binLimiter = rateLimit({
+    windowMs: 24 * 60 * 60 * 1000,
+    limit: 50,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    skipSuccessfulRequests: true,
+    requestWasSuccessful: (req, res) => res.statusCode === 304,
+});
 
-async function verifySimulatorUpdate() {
-    const res = await fetch("https://api.github.com/repos/SaltyMold/Salty-OS/releases");
-
-    if (!res.ok) {
-        throw new Error(`GitHub API error: ${res.status}`);
-    }
-
-    const releases = await res.json();
-    const release = releases.find((r) => !r.prerelease && !r.draft);
-
-    if (release.tag_name !== downloadedVersion) {
-        const simulatorRes = await fetch(release.assets.find((asset) => asset.name === "epsilon.html").browser_download_url);
-        if (!simulatorRes.ok) {
-            throw new Error(`GitHub download error: ${simulatorRes.status}`);
-        }
-
-        let text = await simulatorRes.text();
-        text = text.replace("var SALTY_ALLOWED_ORIGINS = [];", `var SALTY_ALLOWED_ORIGINS = ["${process.env.SITE_URL}"];`);
-
-        await writeFile("./epsilon.html", text, "utf-8");
-
-        downloadedVersion = release.tag_name;
-        setTimeout(() => verifySimulatorUpdate(), 24 * 60 * 60 * 1000);
-    }
-}
+const binOptions = {
+    index: false,
+    dotfiles: "ignore",
+    etag: true,
+    lastModified: true,
+    maxAge: "1h",
+    fallthrough: false,
+};
 
 if (!process.argv.includes("--dev")) {
     try {
-        await verifySimulatorUpdate();
+        await rm("bin", { recursive: true, force: true });
+        await mkdir("bin");
+        await saltyOSDownload();
+        await epsilonDownload();
     } catch (err) {
         console.error(err);
     }
@@ -77,6 +71,9 @@ app.use(express.static("public", { extensions: ["html"] }));
 app.use(limiter);
 
 app.use("/api", apiRoutes);
+app.use("/bin", binLimiter, express.static("bin", binOptions));
+app.get("/themes", (req, res) => res.redirect(301, "/themes/browse"));
+app.get("/fr/themes", (req, res) => res.redirect(301, "/fr/themes/browse"));
 
 await refreshCache();
 

@@ -4,6 +4,18 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{{ title }}</title>
+        <meta name="description" content="{{ description }}" />
+        <meta property="og:site_name" content="Salty OS" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="{{ title }}" />
+        <meta property="og:description" content="{{ description }}" />
+        <meta property="og:url" content="{{ siteUrl }}{{ "" if lang == defaultLang else "/" ~ lang }}{{ pagePath }}" />
+        <meta property="og:image" content="{{ image }}" />
+        <meta property="og:locale" content="{{ locale }}" />
+        {% for locale in altLocales %}
+            <meta property="og:locale:alternate" content="{{ locale }}" />
+        {% endfor %}
+
         <link rel="preload" href="/font/Rubik.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="/styles.css" />
         <link rel="icon" type="image/x-icon" href="/assets/logo.png" />
