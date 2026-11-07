@@ -613,7 +613,9 @@ async function startInstallSection() {
             return;
         } catch {}
 
-        calculator.detect(connectCalculator);
+        calculator.detect(connectCalculator, () => {
+            setState("connect-error");
+        });
     });
 
     navigator.usb.addEventListener("disconnect", function (e) {
