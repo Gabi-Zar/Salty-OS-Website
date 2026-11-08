@@ -24,7 +24,6 @@ const themesSizeBar = document.getElementById("themes-size-bar");
 const themesSizeText = document.getElementById("themes-size-text");
 
 let userThemes = localStorage.getItem("userThemes") ? JSON.parse(localStorage.getItem("userThemes")) : [];
-console.log(userThemes);
 let totalThemesSize = HEADER_SIZE;
 themesSizeText.innerText = `${(totalThemesSize / 1024).toFixed(1)} / ${THEMES_MAX_SIZE / 1024} KiB`;
 
@@ -340,7 +339,6 @@ async function startInstallSection() {
         bar.replaceChildren();
 
         for (let i = 0; i < segments.length; i++) {
-            console.log(segments);
             while (segments[i].type === segments[i + 1]?.type) {
                 segments[i].sizeMB += segments[i + 1].sizeMB;
                 segments.splice(i + 1, 1);
@@ -357,6 +355,11 @@ async function startInstallSection() {
 
     function updateInstallInterface(model, info) {
         const state = isUnlocked(info, calculator);
+
+        const connectButton = document.getElementById("install-connect");
+        if (!state && info.slot.name === "A") connectButton.classList.add("hidden");
+        else connectButton.classList.remove("hidden");
+
         setInfo("model", `N${model} - ${state ? i18n.unlocked : i18n.locked}`);
         setInfo("activeSlot", info.slot.name);
         for (const slotID of ["slotA", "slotB"]) {
@@ -599,8 +602,6 @@ async function startInstallSection() {
             return;
         }
         setState("done");
-        console.log(info);
-        console.log(calculator.dfuInterfaceCount);
         updateInstallInterface(model, info);
     }
 
@@ -698,7 +699,6 @@ async function startup() {
     }
 
     const serverThemes = await res.json();
-    console.log(serverThemes);
 
     await Promise.all(
         userThemes.map(async (theme) => {
