@@ -38,6 +38,25 @@ archiveIcon.addEventListener("mouseleave", () => {
     archiveIconAnimation.play();
 });
 
+const discordIcon = document.getElementById("discord-icon");
+const discordIconAnimation = lottie.loadAnimation({ container: discordIcon, renderer: "svg", loop: true, autoplay: false, path: "https://useanimations.com/icons/discord.json" });
+const motion = matchMedia("(prefers-reduced-motion: reduce)");
+let stopAfterCycle = false;
+discordIconAnimation.addEventListener("loopComplete", () => {
+    if (stopAfterCycle) {
+        stopAfterCycle = false;
+        discordIconAnimation.goToAndStop(0, true);
+    }
+});
+discordIcon.addEventListener("mouseenter", () => {
+    stopAfterCycle = false;
+    if (!motion.matches) discordIconAnimation.play();
+});
+discordIcon.addEventListener("mouseleave", () => {
+    stopAfterCycle = !motion.matches && !discordIconAnimation.isPaused;
+    if (!stopAfterCycle) discordIconAnimation.goToAndStop(0, true);
+});
+
 const langSwitcher = document.querySelector(".lang-switcher");
 const trigger = langSwitcher.querySelector(".lang-trigger");
 const dropdown = langSwitcher.querySelector(".lang-dropdown");
