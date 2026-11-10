@@ -4,7 +4,12 @@ let downloadedVersion = "";
 const epsilonVersions = [{ n0115: "26.4.0" }, { n0110: "26.4.0" }];
 
 async function saltyOSDownload() {
-    const res = await fetch("https://api.github.com/repos/SaltyMold/Salty-OS/releases");
+    const headers = { Accept: "application/vnd.github+json" };
+    if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const res = await fetch("https://api.github.com/repos/SaltyMold/Salty-OS/releases", { headers });
 
     if (!res.ok) {
         throw new Error(`GitHub API error: ${res.status}`);
