@@ -508,6 +508,7 @@ async function startInstallSection() {
 
             const slotAddress = slotChar === "A" ? 0x90000000 : 0x90400000;
             const userlandAddress = slotChar === "A" ? 0x90020000 : 0x90420000;
+            const themesAddress = info[slotID].saltyOS?.themesArea[slotChar].start;
 
             async function flash(plan) {
                 showFlash();
@@ -559,16 +560,19 @@ async function startInstallSection() {
                     flash(async () => [
                         ...(await dfuSteps(`/bin/SaltyOS.userland.onboarding.allow3rdparty.${slotChar}.n${model}.dfu`)),
                         await binStep(`/bin/Epsilon.kernel.${slotChar}.n${model}.bin`, slotAddress),
+                        await binStep("/bin/SaltyOS.theme_area.bin", themesAddress),
                     ]),
                 saltyKernel: () =>
                     flash(async () => [
                         ...(await dfuSteps(`/bin/SaltyOS.userland.onboarding.allow3rdparty.${slotChar}.custom_kernel.n${model}.dfu`)),
                         await binStep(`/bin/SaltyOS.kernel.${slotChar}.n${model}.bin`, slotAddress),
+                        await binStep("/bin/SaltyOS.theme_area.bin", themesAddress),
                     ]),
                 saltyBig: () =>
                     flash(async () => [
                         ...(await dfuSteps(`/bin/SaltyOS.userland.onboarding.allow3rdparty.${slotChar}.custom_kernel.big_userland.n${model}.dfu`)),
                         await binStep(`/bin/SaltyOS.kernel.${slotChar}.n${model}.bin`, slotAddress),
+                        await binStep("/bin/SaltyOS.theme_area.bin", themesAddress),
                     ]),
                 epsilon: () =>
                     flash(async () => [await binStep(`/bin/Epsilon.userland.${slotChar}.n${model}.bin`, userlandAddress), await binStep(`/bin/Epsilon.kernel.${slotChar}.n${model}.bin`, slotAddress)]),
