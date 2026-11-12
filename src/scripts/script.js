@@ -508,7 +508,7 @@ async function startInstallSection() {
 
             const slotAddress = slotChar === "A" ? 0x90000000 : 0x90400000;
             const userlandAddress = slotChar === "A" ? 0x90020000 : 0x90420000;
-            const themesAddress = info[slotID].saltyOS?.themesArea[slotChar].start;
+            const themesAddress = info[slotID].saltyOS?.themesArea?.[slotChar].start ?? (slotChar === "A" ? 0x90670000 : 0x90270000);
 
             async function flash(plan) {
                 showFlash();
