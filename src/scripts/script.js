@@ -9,13 +9,6 @@ import "./common/icons.js";
 initLangSwitcher();
 
 async function startup() {
-    const res = await fetch("/api/get-themes");
-    if (!res.ok) {
-        throw new Error(`unable to fetch themes from server. Status: ${res.status}`);
-    }
-
-    const serverThemes = await res.json();
-
     await Promise.all(
         userThemes.map(async (theme) => {
             updateThemesInterface(themeSize(await prepareTheme(theme)));
@@ -23,7 +16,7 @@ async function startup() {
     );
 
     if (document.getElementById("latest-themes-grid")) {
-        await initIndex(serverThemes);
+        await initIndex();
     }
 
     if (window.location.pathname.includes("install")) {

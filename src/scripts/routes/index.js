@@ -2,11 +2,16 @@ import { buildThemesBinary, themeSize, prepareTheme } from "../common/themes-uti
 import { userThemes, saveUserThemes, updateThemesInterface } from "../common/archive.js";
 import { registerSimulator, loadThemeArea, selectTheme } from "../common/simulator.js";
 
-export async function initIndex(serverThemes) {
+export async function initIndex() {
+    const res = await fetch("/api/get-themes?limit=4");
+    if (!res.ok) {
+        throw new Error(`unable to fetch themes from server. Status: ${res.status}`);
+    }
+
+    const themes = await res.json();
+
     const themeCardTemplate = document.getElementById("theme-card-template");
     const latestThemesGrid = document.getElementById("latest-themes-grid");
-
-    const themes = [...serverThemes].sort((a, b) => b["creation-date"].localeCompare(a["creation-date"])).slice(0, 4);
 
     async function setupThemeCard(theme) {
         const themeCardTemplateCopy = themeCardTemplate.content.cloneNode(true);
@@ -22,6 +27,7 @@ export async function initIndex(serverThemes) {
         });
 
         themeCardTemplateCopy.getElementById("title").appendChild(document.createTextNode(theme.name));
+        themeCardTemplateCopy.getElementById("author").appendChild(document.createTextNode(theme.pseudo));
         latestThemesGrid.appendChild(themeCardTemplateCopy);
 
         iframe.src = iframe.dataset.src;
@@ -35,6 +41,8 @@ export async function initIndex(serverThemes) {
         }
         selectTheme(simulator, 1);
     }
+
+    if (themes.length === 0) return;
 
     await setupThemeCard(themes[0]);
     await Promise.all(themes.slice(1, 4).map(setupThemeCard));

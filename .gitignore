@@ -1,6 +1,7 @@
 node_modules
 .env
 themes.json
+src/scripts/common/lz4hc-wasm.js
 *.ignore
 public/**/*.html
 public/dist

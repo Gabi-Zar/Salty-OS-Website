@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
-import { refreshCache } from "./themes-storage.js";
 import { saltyOSDownload, epsilonDownload } from "./downloads-utils.js";
+import { connectDB } from "./db.js";
 import { mkdir, rm } from "fs/promises";
 
 import apiRoutes from "./routes/api.js";
@@ -65,8 +65,6 @@ app.get("/", (req, res, next) => {
     next();
 });
 
-app.use(express.json());
-
 app.use(express.static("public", { extensions: ["html"] }));
 app.use(limiter);
 
@@ -75,7 +73,7 @@ app.use("/bin", binLimiter, express.static("bin", binOptions));
 app.get("/themes", (req, res) => res.redirect(301, "/themes/browse"));
 app.get("/fr/themes", (req, res) => res.redirect(301, "/fr/themes/browse"));
 
-await refreshCache();
+await connectDB();
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

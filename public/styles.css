@@ -453,6 +453,21 @@ section {
     font-weight: 500;
 }
 
+.card-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    column-gap: 10px;
+    min-width: 0;
+}
+
+.card-author {
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    opacity: 0.7;
+    overflow-wrap: anywhere;
+}
+
 .card-text {
     display: flex;
     justify-content: center;

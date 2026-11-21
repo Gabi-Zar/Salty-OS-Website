@@ -3,8 +3,10 @@ import * as esbuild from "esbuild";
 import { rm } from "fs/promises";
 import { watch } from "fs";
 import { buildPages } from "./i18n-build.js";
+import { buildLz4hc } from "./lz4hc/build.js";
 
 await rm("public/dist", { recursive: true, force: true });
+await buildLz4hc();
 
 const isWatching = process.argv.includes("--watch");
 
@@ -16,6 +18,7 @@ const options = {
     target: "es2022",
     sourcemap: isWatching,
     minify: !isWatching,
+    legalComments: "eof",
     logLevel: "info",
 };
 
