@@ -21,6 +21,10 @@ export function registerSimulator(iframe) {
     return simulator;
 }
 
+export function unregisterSimulator(iframe) {
+    for (const [source, simulator] of simulators) if (simulator.iframe === iframe) simulators.delete(source);
+}
+
 function call(simulator, type, payload) {
     return simulator.ready.then(
         () =>

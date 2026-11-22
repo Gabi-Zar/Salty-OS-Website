@@ -2,4 +2,34 @@
 {% set title = t("title.browse") %}
 {% set description = t("description.browse") %}
 {% block content %}
+    {% include "partials/theme-card.njk" %}
+
+    <section class="browse">
+        <h2>{{ t("browse.title") }}</h2>
+
+        <form class="browse-controls" id="browse-controls" role="search">
+            <input id="browse-search" type="search" maxlength="15" autocomplete="off" placeholder="{{ t("browse.search") }}" aria-label="{{ t("browse.search") }}" />
+            <div class="install-select" id="browse-sort" data-value="date">
+                <button type="button" class="install-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="{{ t("browse.sort") }}" title="{{ t("browse.sort") }}">
+                    <span class="install-select-label">{{ t("browse.sort.date") }}</span>
+                </button>
+                <ul class="install-select-dropdown" role="listbox">
+                    <li class="install-select-option selected" role="option" data-value="date">{{ t("browse.sort.date") }}</li>
+                    <li class="install-select-option" role="option" data-value="name">{{ t("browse.sort.name") }}</li>
+                    <li class="install-select-option" role="option" data-value="author">{{ t("browse.sort.author") }}</li>
+                </ul>
+            </div>
+            <button type="button" id="browse-order" data-label-asc="{{ t("browse.order.asc") }}" data-label-desc="{{ t("browse.order.desc") }}"></button>
+        </form>
+
+        <div class="browse-grid" id="browse-grid"></div>
+
+        <p class="card-text hidden" id="browse-empty">{{ t("browse.empty") }}</p>
+        <p class="card-text hidden" id="browse-error">{{ t("browse.error") }}</p>
+        <nav class="browse-pages hidden" id="browse-pages" aria-label="{{ t("browse.pages") }}">
+            <button type="button" id="browse-prev" title="{{ t("browse.prev") }}" aria-label="{{ t("browse.prev") }}"><</button>
+            <span class="browse-page-label">{{ t("browse.page") }} <span id="browse-page">1</span></span>
+            <button type="button" id="browse-next" title="{{ t("browse.next") }}" aria-label="{{ t("browse.next") }}">></button>
+        </nav>
+    </section>
 {% endblock %}

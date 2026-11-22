@@ -1,0 +1,12 @@
+<template id="theme-card-template">
+    <div class="card-theme">
+        <iframe id="simulator" data-src="/bin/SaltyOS.epsilon.html?embed" title="SaltyOS simulator" loading="lazy" scrolling="no"></iframe>
+        <div class="card-footer">
+            <div class="card-heading">
+                <div id="title" class="card-title"></div>
+                <div class="card-author">{{ t("themes.by") }} <span id="author"></span></div>
+            </div>
+            <button id="button">{{ t("themes.add") }}</button>
+        </div>
+    </div>
+</template>
