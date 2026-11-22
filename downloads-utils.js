@@ -80,4 +80,28 @@ async function epsilonDownload() {
     }
 }
 
-export { saltyOSDownload, epsilonDownload };
+async function ABLauncherDownload() {
+    const headers = { Accept: "application/vnd.github+json" };
+    if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const res = await fetch("https://api.github.com/repos/SaltyMold/ABLauncher-Numworks/releases", { headers });
+
+    if (!res.ok) {
+        throw new Error(`GitHub API error: ${res.status}`);
+    }
+
+    const releases = await res.json();
+    const release = releases.find((r) => !r.prerelease && !r.draft);
+
+    const assetRes = await fetch(release.assets[0].browser_download_url);
+    if (!assetRes.ok) {
+        throw new Error(`GitHub download error: ${assetRes.status}`);
+    }
+
+    await writeFile(`./bin/${release.assets[0].name}`, Buffer.from(await assetRes.arrayBuffer()));
+    console.log(`downloaded ${release.assets[0].name}`);
+}
+
+export { saltyOSDownload, epsilonDownload, ABLauncherDownload };

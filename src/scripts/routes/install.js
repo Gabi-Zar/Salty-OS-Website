@@ -1,4 +1,5 @@
 import Numworks from "salty-os.js";
+import { linkNwa } from "../common/nwlink.js";
 
 async function wait(ms) {
     await new Promise((r) => setTimeout(r, ms));
@@ -255,8 +256,7 @@ export async function initInstall() {
             }
             if (slotChar === "B") reasons.saltyBig = i18n.wrongSlot;
 
-            reasons.ablauncher = "Not implemented now";
-            if (versionMajor < 20) reasons.ablauncher = i18n.noExtApps;
+            if (slot.external?.flashSize <= 0) reasons.ablauncher = i18n.noExtApps;
 
             function refreshInstallControls() {
                 for (const option of options) {
@@ -350,7 +350,19 @@ export async function initInstall() {
                     ]),
                 epsilon: () =>
                     flash(async () => [await binStep(`/bin/Epsilon.userland.${slotChar}.n${model}.bin`, userlandAddress), await binStep(`/bin/Epsilon.kernel.${slotChar}.n${model}.bin`, slotAddress)]),
-                ablauncher: async () => {},
+                ablauncher: () =>
+                    flash(async () => {
+                        const nwa = new Uint8Array(await fetchBuffer("/bin/ABLauncher.nwa"));
+                        const trampolineStart = slot.userlandHeaderAddress + ("epsilon" in slot ? 44 : 36) + 4 + 8;
+                        const buffer = await linkNwa(nwa, {
+                            flashStart: slot.external.flashStart,
+                            flashLength: slot.external.flashSize,
+                            ramStart: slot.external.ramStart,
+                            ramLength: slot.external.ramSize,
+                            trampolineStart,
+                        });
+                        return [{ address: slot.external.flashStart, buffer }];
+                    }),
                 uninstall: () => flash(async () => [{ address: slotAddress, buffer: new Uint8Array(0x40000).fill(0xff) }]),
                 erase: () => flash(async () => [{ address: slotAddress, buffer: new Uint8Array(0x400000).fill(0xff) }]),
             };

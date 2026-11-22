@@ -4,7 +4,7 @@ import { rateLimit } from "express-rate-limit";
 import { Theme } from "../models/theme.js";
 import { invalidateThemesCache } from "../themes-cache.js";
 import { HttpError, bearerToken } from "./http.js";
-import { saltyOSDownload, epsilonDownload } from "../downloads-utils.js";
+import { saltyOSDownload, epsilonDownload, ABLauncherDownload } from "../downloads-utils.js";
 
 const router = express.Router();
 
@@ -69,6 +69,7 @@ router.delete("/themes/:id", async (req, res) => {
 router.get("/refresh-bin", async (req, res) => {
     await saltyOSDownload();
     await epsilonDownload();
+    await ABLauncherDownload();
     res.status(200).end();
 });
 

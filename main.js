@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
-import { saltyOSDownload, epsilonDownload } from "./downloads-utils.js";
+import { saltyOSDownload, epsilonDownload, ABLauncherDownload } from "./downloads-utils.js";
 import { connectDB } from "./db.js";
 import { mkdir, rm } from "fs/promises";
 
@@ -45,6 +45,7 @@ if (!process.argv.includes("--dev")) {
         await mkdir("bin");
         await saltyOSDownload();
         await epsilonDownload();
+        await ABLauncherDownload();
     } catch (err) {
         console.error(err);
     }
